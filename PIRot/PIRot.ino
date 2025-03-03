@@ -6,22 +6,22 @@
 #define BUTTON_PIN 5        // GPIO 5 = D1 na desce
 
 volatile bool buttonPressed = false;  // Flag pro ISR
-bool normalMode = false;              // Výchozí režim je "skrytý"
-bool motionDetected = false;          // Pohyb detekován flag
+bool normalMode = false;              // Vychozi rezim je "skryty"
+bool motionDetected = false;          // Pohyb detekovan flag
 
-// Struktura pro příjem a odesílání dat
+// prijimani a odeseilani zprav
 typedef struct struct_message {
   int movementDetected;  // 1 = pohyb, 0 = žádný pohyb
 } struct_message;
 
 struct_message incomingData; // Přijatá data
 
-// ISR pro tlačítko
+// ISR pro button
 void ICACHE_RAM_ATTR onButtonPress() {
   buttonPressed = true; // Nastaví flag
 }
 
-// Callback pro příjem zprávy
+// Callback (prijimani zprav)
 void onDataReceive(uint8_t *macAddr, uint8_t *data, uint8_t len) {
   memcpy(&incomingData, data, sizeof(incomingData));
   motionDetected = (incomingData.movementDetected == 1);
@@ -37,16 +37,16 @@ void setup() {
   Serial.begin(74880);
   Serial.println("HELLO WORLD - PIRot se inicializuje");
 
-  // Inicializace Wi-Fi
+  // init Wi-Fi
   WiFi.mode(WIFI_STA);
 
-  // Inicializace ESP-NOW
+  // init ESP-NOW
   if (esp_now_init() != 0) {
     Serial.println("Chyba při inicializaci ESP-NOW");
     return;
   }
 
-  // Nastavení role a callbacku
+  // role a callback
   esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
   esp_now_register_recv_cb(onDataReceive);
 
@@ -54,13 +54,13 @@ void setup() {
 }
 
 void loop() {
-  // Zpracování stisku tlačítka mimo ISR
+  // stisk buttonu mimo ISR
   if (buttonPressed) {
     normalMode = !normalMode;
     Serial.print("Režim změněn na: ");
     Serial.println(normalMode ? "Normální" : "Skrytý");
 
-    // Potvrzení bliknutím LED
+    // bliknuti LED
     digitalWrite(LED_PIN, HIGH);
     delay(100);
     digitalWrite(LED_PIN, LOW);
@@ -68,12 +68,12 @@ void loop() {
     buttonPressed = false;
   }
 
-  // Zpracování detekce pohybu
+  // detekce pohybu
   if (motionDetected) {
     Serial.println("Detekován pohyb!");
 
     if (normalMode) {
-      Serial.println("Normální režim: LED a bzučák aktivovány");
+      Serial.println("Normální režim: LED a bzučák");
       digitalWrite(LED_PIN, HIGH);
       digitalWrite(BUZZER_PIN, HIGH);
       delay(500);
@@ -86,7 +86,7 @@ void loop() {
       digitalWrite(LED_PIN, LOW);
       digitalWrite(BUZZER_PIN, LOW);
     } else {
-      Serial.println("Skrytý režim: Pouze LED bliká");
+      Serial.println("Skrytý režim: LED");
       digitalWrite(LED_PIN, HIGH);
       delay(100);
       digitalWrite(LED_PIN, LOW);
@@ -95,6 +95,6 @@ void loop() {
     motionDetected = false; // Reset flagu
   }
 
-  delay(100); // Krátká pauza pro stabilitu
+  delay(100); // stabilizacni pauza xd
 }
 
