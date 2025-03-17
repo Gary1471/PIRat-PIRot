@@ -6,7 +6,7 @@
 #define BUTTON_PIN 5        // GPIO 5 = D1 na desce
 
 volatile bool buttonPressed = false;  // Flag pro ISR
-bool normalMode = false;              // Vychozi rezim je "skryty"
+bool normalMode = false;              // Vychozi rezim je TICHY
 bool motionDetected = false;          // Pohyb detekovan flag
 
 // prijimani a odeseilani zprav
