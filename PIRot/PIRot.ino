@@ -9,7 +9,7 @@ volatile bool buttonPressed = false;  // Flag pro ISR
 bool normalMode = false;              // Vychozi rezim je TICHY
 bool motionDetected = false;          // Pohyb detekovan flag
 
-// prijimani a odeseilani zprav
+// zprava
 typedef struct struct_message {
   int movementDetected;  // 1 = pohyb, 0 = žádný pohyb
 } struct_message;
